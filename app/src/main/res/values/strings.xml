@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Погода+</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="add_fragment">Погода в городах</string>
+    <string name="detail_fragment">Погода в</string>
+
+    <string name="title_dialog">Добывьте новый город</string>
+    <string name="massage_dialog">Пожалуйста введите название города на английском</string>
+    <string name="hint_dialog">Название города</string>
+    <string name="positive_dialog">Добавить</string>
+    <string name="negative_dialog">Отмена</string>
+    <string name="warning_dialog">Введите текст в поле для ввода текста</string>
+
+    <string name="no_cities">Нет такого города</string>
+    <string name="no_permissions">Пользователь не дал разрешение, так что его город определить невозможно</string>
+</resources>

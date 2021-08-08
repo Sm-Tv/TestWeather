@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/addCities">
+
+    <fragment
+        android:id="@+id/addCities"
+        android:name="sm_tv_prodactions.com.weatherincities.fragments.AddCities"
+        android:label="@string/add_fragment"
+        tools:layout="@layout/fragment_add_cities" >
+        <action
+            android:id="@+id/action_addCities_to_datailsInformation"
+            app:destination="@id/datailsInformation" />
+    </fragment>
+    <fragment
+        android:id="@+id/datailsInformation"
+        android:name="sm_tv_prodactions.com.weatherincities.fragments.DetailsInformation"
+        android:label="@string/detail_fragment"
+        tools:layout="@layout/fragment_datails_information" >
+        <argument
+            android:name="citiName"
+            app:argType="string" />
+    </fragment>
+</navigation>
