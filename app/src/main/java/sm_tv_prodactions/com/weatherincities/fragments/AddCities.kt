@@ -212,7 +212,6 @@ class AddCities : Fragment(), LocListener {
                  citiList.clear()
                  citiList.addAll(set)
                  adapter.setItems(citiList,lat.toDouble(), lon.toDouble())
-
              } else {
                  //Log.d("debug", response.body().toString())
                  //Log.d("debug", "--------------=-----------------=------------")
