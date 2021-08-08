@@ -25,11 +25,11 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.myViewHolder>() {
     private var sortedList = SortedList(ModelCities::class.java, object : SortedList.Callback<ModelCities>() {
         override fun compare(o1: ModelCities, o2: ModelCities): Int {
 
-
-            return if (o2.coord.lat == lat && o2.coord.lon == lon) {
-                1
+            if (o1.coord.lat != lat && o1.coord.lon != lon) {
+                print("+++++++++++++++++++++++++++")
+                return 1
             } else  {
-                -1
+                return -1
             }
         }
 
