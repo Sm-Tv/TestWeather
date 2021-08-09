@@ -26,7 +26,7 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.myViewHolder>() {
         override fun compare(o1: ModelCities, o2: ModelCities): Int {
 
             if (o2.coord.lat == lat && o2.coord.lon == lon && o1.coord.lat != lat && o1.coord.lon != lon) {
-                
+
                 return 1
             }else{
 
@@ -97,11 +97,16 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.myViewHolder>() {
         return sortedList.size()
     }
 
-    fun setItems(notes: ArrayList<ModelCities>, lat: Double, lon:Double) {
+    fun setItems(notes: ArrayList<ModelCities>) {
         sortedList.replaceAll(notes)
+
+    }
+
+    fun setCoord(lat: Double, lon:Double){
         this.lat = lat
         this.lon = lon
     }
+
 
 
 }

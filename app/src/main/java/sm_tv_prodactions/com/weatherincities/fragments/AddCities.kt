@@ -1,7 +1,6 @@
 package sm_tv_prodactions.com.weatherincities.fragments
 
-import android.Manifest
-import android.app.Activity.RESULT_OK
+
 import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
@@ -10,14 +9,11 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,14 +24,12 @@ import kotlinx.android.synthetic.main.fragment_add_cities.view.*
 import sm_tv_prodactions.com.weatherincities.MainActivity
 import sm_tv_prodactions.com.weatherincities.R
 import sm_tv_prodactions.com.weatherincities.adapters.MyAdapter
-import sm_tv_prodactions.com.weatherincities.adapters.NewAdapter
 import sm_tv_prodactions.com.weatherincities.dataBD.viewmodel.ViewModelDb
 import sm_tv_prodactions.com.weatherincities.dataRest.repository.Repository
 import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModel
 import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModelFactory
 import sm_tv_prodactions.com.weatherincities.models.Citi
 import sm_tv_prodactions.com.weatherincities.models.ModelCities
-import sm_tv_prodactions.com.weatherincities.utils.Constants
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION1
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION2
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION_REQIST
@@ -120,7 +114,7 @@ class AddCities : Fragment(), LocListener {
             R.id.delete -> {
                 mViewModelDb.deleteAllNotes()
                 citiList.clear()
-                adapter.setItems(citiList, lat.toDouble(), lon.toDouble())
+                adapter.setItems(citiList)
             }
 
         }
@@ -199,6 +193,7 @@ class AddCities : Fragment(), LocListener {
     private fun coordinateQuery(lat:String, lon:String){
         val later = lat.toDouble()
         val loner = lon.toDouble()
+        val d =
         mViewModel.getListDataCitiesByCoord(later, loner, TOKEN_ID)
 
     }
@@ -211,7 +206,9 @@ class AddCities : Fragment(), LocListener {
                  val set: HashSet<ModelCities> = HashSet(citiList)
                  citiList.clear()
                  citiList.addAll(set)
-                 adapter.setItems(citiList,lat.toDouble(), lon.toDouble())
+                 print(lat)
+                 print(lon)
+                 adapter.setItems(citiList)
              } else {
                  //Log.d("debug", response.body().toString())
                  //Log.d("debug", "--------------=-----------------=------------")
@@ -227,8 +224,9 @@ class AddCities : Fragment(), LocListener {
      }
 
     override fun onLocationChanged(location: Location) {
-        lat = location.latitude.toString()
-        lon = location.longitude.toString()
+        lat = "%.4f".format(location.latitude).replace(",",".",true)
+        lon = "%.4f".format(location.longitude).replace(",",".",true)
+        adapter.setCoord(lat.toDouble(),lon.toDouble())
         coordinateQuery(lat, lon)
     }
 }
