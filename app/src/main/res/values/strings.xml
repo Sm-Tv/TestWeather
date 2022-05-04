@@ -7,7 +7,7 @@
     <string name="detail_fragment">Погода в</string>
 
     <string name="title_dialog">Добывьте новый город</string>
-    <string name="massage_dialog">Пожалуйста введите название города на английском</string>
+    <string name="massage_dialog">Введите название города или района</string>
     <string name="hint_dialog">Название города</string>
     <string name="positive_dialog">Добавить</string>
     <string name="negative_dialog">Отмена</string>

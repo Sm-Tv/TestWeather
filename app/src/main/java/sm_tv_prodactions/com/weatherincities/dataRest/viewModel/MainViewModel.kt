@@ -13,14 +13,14 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     val myResponseListCities: MutableLiveData<Response<ModelCities>> = MutableLiveData()
 
-    fun getListDataCities(name: String,key:String){
+    fun getCites(name: String, key:String){
         viewModelScope.launch {
             val repository = repository.getCitiList(name,key)
             myResponseListCities.value = repository
         }
     }
 
-    fun getListDataCitiesByCoord(lat: Double,lon: Double, key:String){
+    fun getCitiesByCoord(lat: Double, lon: Double, key:String){
         viewModelScope.launch {
             val repository = repository.getCitiListByCoord(lat,lon,key)
             myResponseListCities.value = repository

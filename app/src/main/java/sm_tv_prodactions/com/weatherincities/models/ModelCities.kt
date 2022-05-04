@@ -8,8 +8,6 @@ data class ModelCities(
     val wind: Wind
 )
 
-
-
 data class Coord(
     val lon: Double,
     val lat: Double

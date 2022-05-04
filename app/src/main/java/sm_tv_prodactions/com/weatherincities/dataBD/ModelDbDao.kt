@@ -2,7 +2,6 @@ package sm_tv_prodactions.com.weatherincities.dataBD
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import sm_tv_prodactions.com.weatherincities.models.Citi
 
 
 @Dao

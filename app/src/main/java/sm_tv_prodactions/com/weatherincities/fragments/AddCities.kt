@@ -23,12 +23,12 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_add_cities.view.*
 import sm_tv_prodactions.com.weatherincities.MainActivity
 import sm_tv_prodactions.com.weatherincities.R
-import sm_tv_prodactions.com.weatherincities.adapters.MyAdapter
+import sm_tv_prodactions.com.weatherincities.adapters.NewAdapter
 import sm_tv_prodactions.com.weatherincities.dataBD.viewmodel.ViewModelDb
 import sm_tv_prodactions.com.weatherincities.dataRest.repository.Repository
 import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModel
 import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModelFactory
-import sm_tv_prodactions.com.weatherincities.models.Citi
+import sm_tv_prodactions.com.weatherincities.dataBD.Citi
 import sm_tv_prodactions.com.weatherincities.models.ModelCities
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION1
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION2
@@ -42,12 +42,10 @@ class AddCities : Fragment(), LocListener {
 
     private lateinit var mViewModel: MainViewModel
     private lateinit var mViewModelDb: ViewModelDb
-    private lateinit var adapter: MyAdapter
+    private lateinit var adapter: NewAdapter
     var citiList = ArrayList<ModelCities>()
-    //private lateinit var citiList: ArrayList<ModelCities>
 
     private lateinit var locationManager: LocationManager
-    private lateinit var lastLocation: Location
     private lateinit var myLocListener: MyLocListener
 
     private var lat = "0.0"
@@ -57,52 +55,28 @@ class AddCities : Fragment(), LocListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_add_cities, container, false)
-
-        //recyclerview
-        adapter = MyAdapter()
-        //adapter.notifyDataSetChanged()
-        val myRecyclerView = view.findViewById<RecyclerView>(R.id.my_recyclerView)
-        myRecyclerView.adapter = adapter
-        myRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        myRecyclerView.addItemDecoration(
-            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        )
-
-        //viewmodel provider
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
-        mViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        chekResponse()
-
-
-        //view model dataBase
-        mViewModelDb = ViewModelProvider(this).get(ViewModelDb::class.java)
-        mViewModelDb.readAllData.observe(viewLifecycleOwner, Observer { note ->
-            //adapter.setItems(note)
-            getData(note, TOKEN_ID)
-        })
-
-        //add click listener
-        view.my_floatingActionButton.setOnClickListener {
-            getNameCities()
-        }
-
-        //geo service
         locationManager =
             (activity as MainActivity).getSystemService(Context.LOCATION_SERVICE) as LocationManager
         myLocListener = MyLocListener()
         myLocListener.setLocListenerInterface(this)
-
         setHasOptionsMenu(true)
-
         chekPermission(PERMISSION1, PERMISSION2)
-
-
-
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = NewAdapter()
+        initRecycler(view, adapter)
+        val repository = Repository()
+        val viewModelFactory = MainViewModelFactory(repository)
+        mViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        chekResponse()
+        initViewModelDB()
+        view.my_floatingActionButton.setOnClickListener {
+            getNameCities()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -114,14 +88,27 @@ class AddCities : Fragment(), LocListener {
             R.id.delete -> {
                 mViewModelDb.deleteAllNotes()
                 citiList.clear()
-                adapter.setItems(citiList)
+                adapter.setData(citiList)
             }
-
         }
-
         return true
     }
 
+    private fun initViewModelDB(){
+        mViewModelDb = ViewModelProvider(this).get(ViewModelDb::class.java)
+        mViewModelDb.readAllData.observe(viewLifecycleOwner,  { note ->
+            getData(note, TOKEN_ID)
+        })
+    }
+
+    private fun initRecycler(view: View, adapter: NewAdapter){
+        val myRecyclerView = view.findViewById<RecyclerView>(R.id.my_recyclerView)
+        myRecyclerView.adapter = adapter
+        myRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        myRecyclerView.addItemDecoration(
+            DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        )
+    }
 
     private fun getNameCities() {
         val dialog = Dialog(requireContext())
@@ -130,14 +117,11 @@ class AddCities : Fragment(), LocListener {
         val pbutton = dialogView.findViewById<Button>(R.id.posButton)
         val nbutton = dialogView.findViewById<Button>(R.id.negButton)
         pbutton.setOnClickListener {
-            val title = edText.text.toString()
+            val title = edText.text.toString().removeSuffix(" ")
             val citi = Citi(0, title)
-            //val key_id = TOKEN_ID
             if (chekInput(title)) {
-                //getData(title,key_id)//делаем запрос
-                //добавление в бд
                 mViewModelDb.addCiti(citi)
-                dialog.dismiss()//закрываем диалоговое окно
+                dialog.dismiss()
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -156,7 +140,7 @@ class AddCities : Fragment(), LocListener {
 
     private fun getData(title: List<Citi>, key: String) {
         for (i in title) {
-            mViewModel.getListDataCities(i.name, key)
+            mViewModel.getCites(i.name, key)
         }
     }
 
@@ -189,29 +173,22 @@ class AddCities : Fragment(), LocListener {
         }
     }
 
-
     private fun coordinateQuery(lat:String, lon:String){
         val later = lat.toDouble()
         val loner = lon.toDouble()
-        val d =
-        mViewModel.getListDataCitiesByCoord(later, loner, TOKEN_ID)
-
+        mViewModel.getCitiesByCoord(later, loner, TOKEN_ID)
     }
 
      private  fun chekResponse(){
-         mViewModel.myResponseListCities.observe(viewLifecycleOwner, Observer { response ->
+         mViewModel.myResponseListCities.observe(viewLifecycleOwner,  { response ->
              if (response.isSuccessful) {
                  val str = response.body()
                  str?.let { citiList.add(it) }
                  val set: HashSet<ModelCities> = HashSet(citiList)
                  citiList.clear()
                  citiList.addAll(set)
-                 print(lat)
-                 print(lon)
-                 adapter.setItems(citiList)
+                 adapter.setData(citiList)
              } else {
-                 //Log.d("debug", response.body().toString())
-                 //Log.d("debug", "--------------=-----------------=------------")
                  Toast.makeText(
                      requireContext(),
                      response.message().toString() + response.code().toString() + response.body()
@@ -219,16 +196,12 @@ class AddCities : Fragment(), LocListener {
                      Toast.LENGTH_SHORT
                  ).show()
              }
-
          })
      }
 
     override fun onLocationChanged(location: Location) {
         lat = "%.4f".format(location.latitude).replace(",",".",true)
         lon = "%.4f".format(location.longitude).replace(",",".",true)
-        adapter.setCoord(lat.toDouble(),lon.toDouble())
         coordinateQuery(lat, lon)
     }
 }
-
-

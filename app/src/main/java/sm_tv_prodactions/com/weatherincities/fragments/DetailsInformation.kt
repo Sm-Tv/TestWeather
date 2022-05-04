@@ -13,8 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_datails_information.view.*
-import kotlinx.android.synthetic.main.item_citi.view.*
 import sm_tv_prodactions.com.weatherincities.R
 import sm_tv_prodactions.com.weatherincities.dataRest.repository.Repository
 import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModel
@@ -45,7 +43,7 @@ class DetailsInformation : Fragment() {
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         mViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        mViewModel.getListDataCities(args.citiName, TOKEN_ID)
+        mViewModel.getCites(args.citiName, TOKEN_ID)
         chekResponse()
 
         //init elements
@@ -66,7 +64,7 @@ class DetailsInformation : Fragment() {
     }
 
     private  fun chekResponse(){
-        mViewModel.myResponseListCities.observe(viewLifecycleOwner, Observer { response ->
+        mViewModel.myResponseListCities.observe(viewLifecycleOwner, { response ->
             if (response.isSuccessful) {
                 val str = response.body()
                 tvCitiName.text = str?.name
@@ -82,8 +80,8 @@ class DetailsInformation : Fragment() {
                 tvTempFeels_like.text =temp_feels_like.toString()
 
                 deg?.let { imStrelka.rotation = it.toFloat() }
-
-                tvSpeed.text = "u=${speed} м/с"
+                val text = "u=${speed} м/с"
+                tvSpeed.text = text
 
             } else {
                 Toast.makeText(

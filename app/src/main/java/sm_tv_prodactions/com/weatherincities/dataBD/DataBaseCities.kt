@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import sm_tv_prodactions.com.weatherincities.models.Citi
 
 
 @Database(entities = [Citi::class], version = 9)

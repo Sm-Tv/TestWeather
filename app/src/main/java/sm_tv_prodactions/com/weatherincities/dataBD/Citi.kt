@@ -1,4 +1,4 @@
-package sm_tv_prodactions.com.weatherincities.models
+package sm_tv_prodactions.com.weatherincities.dataBD
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -12,11 +12,4 @@ data class Citi(
 
     @ColumnInfo(name = "name")
     val name: String,
-
-    //@ColumnInfo(name = "temp")
-    //val temp: String,
-
-    //@ColumnInfo(name = "icon")
-    //val icon: String
-
 )
