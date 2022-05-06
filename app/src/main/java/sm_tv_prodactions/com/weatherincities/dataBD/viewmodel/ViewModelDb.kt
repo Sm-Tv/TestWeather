@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sm_tv_prodactions.com.weatherincities.dataBD.Citi
 import sm_tv_prodactions.com.weatherincities.dataBD.DataBaseCities
 import sm_tv_prodactions.com.weatherincities.dataBD.repository.RepositoryDb
-import sm_tv_prodactions.com.weatherincities.dataBD.Citi
 
 class ViewModelDb(application: Application) : AndroidViewModel(application) {
 

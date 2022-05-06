@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso
 import sm_tv_prodactions.com.weatherincities.R
 import sm_tv_prodactions.com.weatherincities.models.ModelCities
 
-class NewAdapter: RecyclerView.Adapter<NewAdapter.MyViewHolder>() {
+class NewAdapter : RecyclerView.Adapter<NewAdapter.MyViewHolder>() {
 
     private var userList = emptyList<ModelCities>()
 

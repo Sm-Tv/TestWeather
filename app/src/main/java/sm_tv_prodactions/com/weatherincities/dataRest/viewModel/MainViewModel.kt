@@ -7,22 +7,22 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import sm_tv_prodactions.com.weatherincities.dataRest.repository.Repository
 import sm_tv_prodactions.com.weatherincities.models.ModelCities
-import java.security.Key
 
-class MainViewModel(private val repository: Repository): ViewModel() {
+class MainViewModel() : ViewModel() {
 
     val myResponseListCities: MutableLiveData<Response<ModelCities>> = MutableLiveData()
+    private val repository: Repository = Repository()
 
-    fun getCites(name: String, key:String){
+    fun getCites(name: String, key: String) {
         viewModelScope.launch {
-            val repository = repository.getCitiList(name,key)
+            val repository = repository.getCitiList(name, key)
             myResponseListCities.value = repository
         }
     }
 
-    fun getCitiesByCoord(lat: Double, lon: Double, key:String){
+    fun getCitiesByCoord(lat: Double, lon: Double, key: String) {
         viewModelScope.launch {
-            val repository = repository.getCitiListByCoord(lat,lon,key)
+            val repository = repository.getCitiListByCoord(lat, lon, key)
             myResponseListCities.value = repository
         }
     }

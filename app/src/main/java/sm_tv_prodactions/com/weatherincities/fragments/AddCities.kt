@@ -10,12 +10,11 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,11 +23,9 @@ import kotlinx.android.synthetic.main.fragment_add_cities.view.*
 import sm_tv_prodactions.com.weatherincities.MainActivity
 import sm_tv_prodactions.com.weatherincities.R
 import sm_tv_prodactions.com.weatherincities.adapters.NewAdapter
-import sm_tv_prodactions.com.weatherincities.dataBD.viewmodel.ViewModelDb
-import sm_tv_prodactions.com.weatherincities.dataRest.repository.Repository
-import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModel
-import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModelFactory
 import sm_tv_prodactions.com.weatherincities.dataBD.Citi
+import sm_tv_prodactions.com.weatherincities.dataBD.viewmodel.ViewModelDb
+import sm_tv_prodactions.com.weatherincities.dataRest.viewModel.MainViewModel
 import sm_tv_prodactions.com.weatherincities.models.ModelCities
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION1
 import sm_tv_prodactions.com.weatherincities.utils.Constants.PERMISSION2
@@ -49,7 +46,7 @@ class AddCities : Fragment(), LocListener {
     private lateinit var myLocListener: MyLocListener
 
     private var lat = "0.0"
-    private var  lon = "0.0"
+    private var lon = "0.0"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,9 +66,7 @@ class AddCities : Fragment(), LocListener {
         super.onViewCreated(view, savedInstanceState)
         adapter = NewAdapter()
         initRecycler(view, adapter)
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
-        mViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        mViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         chekResponse()
         initViewModelDB()
         view.my_floatingActionButton.setOnClickListener {
@@ -94,14 +89,14 @@ class AddCities : Fragment(), LocListener {
         return true
     }
 
-    private fun initViewModelDB(){
+    private fun initViewModelDB() {
         mViewModelDb = ViewModelProvider(this).get(ViewModelDb::class.java)
-        mViewModelDb.readAllData.observe(viewLifecycleOwner,  { note ->
+        mViewModelDb.readAllData.observe(viewLifecycleOwner, { note ->
             getData(note, TOKEN_ID)
         })
     }
 
-    private fun initRecycler(view: View, adapter: NewAdapter){
+    private fun initRecycler(view: View, adapter: NewAdapter) {
         val myRecyclerView = view.findViewById<RecyclerView>(R.id.my_recyclerView)
         myRecyclerView.adapter = adapter
         myRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -148,16 +143,17 @@ class AddCities : Fragment(), LocListener {
         return !(TextUtils.isEmpty(title))
     }
 
-    private fun chekPermission(permission1: String, permission2: String){
-        if (Build.VERSION.SDK_INT >=23 &&
+    private fun chekPermission(permission1: String, permission2: String) {
+        if (Build.VERSION.SDK_INT >= 23 &&
             checkSelfPermission(requireContext(), permission1) != PackageManager.PERMISSION_GRANTED &&
-            checkSelfPermission(requireContext(), permission2) != PackageManager.PERMISSION_GRANTED ){
-            requestPermissions(arrayOf(permission1,permission2),
+            checkSelfPermission(requireContext(), permission2) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(permission1, permission2),
                 PERMISSION_REQIST
             )
-        }
-        else{
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 1000.0F, myLocListener )
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10, 1000.0F, myLocListener)
         }
     }
 
@@ -167,41 +163,42 @@ class AddCities : Fragment(), LocListener {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(checkSelfPermission(requireContext(), PERMISSION1)==PackageManager.PERMISSION_GRANTED &&
-            checkSelfPermission(requireContext(), PERMISSION2)==PackageManager.PERMISSION_GRANTED  ){
+        if (checkSelfPermission(requireContext(), PERMISSION1) == PackageManager.PERMISSION_GRANTED &&
+            checkSelfPermission(requireContext(), PERMISSION2) == PackageManager.PERMISSION_GRANTED
+        ) {
             chekPermission(PERMISSION1, PERMISSION2)
         }
     }
 
-    private fun coordinateQuery(lat:String, lon:String){
+    private fun coordinateQuery(lat: String, lon: String) {
         val later = lat.toDouble()
         val loner = lon.toDouble()
         mViewModel.getCitiesByCoord(later, loner, TOKEN_ID)
     }
 
-     private  fun chekResponse(){
-         mViewModel.myResponseListCities.observe(viewLifecycleOwner,  { response ->
-             if (response.isSuccessful) {
-                 val str = response.body()
-                 str?.let { citiList.add(it) }
-                 val set: HashSet<ModelCities> = HashSet(citiList)
-                 citiList.clear()
-                 citiList.addAll(set)
-                 adapter.setData(citiList)
-             } else {
-                 Toast.makeText(
-                     requireContext(),
-                     response.message().toString() + response.code().toString() + response.body()
-                         .toString(),
-                     Toast.LENGTH_SHORT
-                 ).show()
-             }
-         })
-     }
+    private fun chekResponse() {
+        mViewModel.myResponseListCities.observe(viewLifecycleOwner, { response ->
+            if (response.isSuccessful) {
+                val str = response.body()
+                str?.let { citiList.add(it) }
+                val set: HashSet<ModelCities> = HashSet(citiList)
+                citiList.clear()
+                citiList.addAll(set)
+                adapter.setData(citiList)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    response.message().toString() + response.code().toString() + response.body()
+                        .toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
+    }
 
     override fun onLocationChanged(location: Location) {
-        lat = "%.4f".format(location.latitude).replace(",",".",true)
-        lon = "%.4f".format(location.longitude).replace(",",".",true)
+        lat = "%.4f".format(location.latitude).replace(",", ".", true)
+        lon = "%.4f".format(location.longitude).replace(",", ".", true)
         coordinateQuery(lat, lon)
     }
 }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 
 @Database(entities = [Citi::class], version = 9)
-abstract class DataBaseCities: RoomDatabase() {
+abstract class DataBaseCities : RoomDatabase() {
     abstract fun modelDbDao(): ModelDbDao
 
 
@@ -15,12 +15,12 @@ abstract class DataBaseCities: RoomDatabase() {
         @Volatile
         private var INSTANCE: DataBaseCities? = null
 
-        fun getDatabase(context: Context): DataBaseCities{
+        fun getDatabase(context: Context): DataBaseCities {
             val tempInstance = INSTANCE
-            if(tempInstance != null){
+            if (tempInstance != null) {
                 return tempInstance
             }
-            synchronized(this){
+            synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DataBaseCities::class.java,

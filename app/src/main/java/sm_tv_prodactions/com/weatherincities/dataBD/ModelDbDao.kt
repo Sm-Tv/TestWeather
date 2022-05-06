@@ -7,7 +7,7 @@ import androidx.room.*
 @Dao
 interface ModelDbDao {
 
-    @Insert( onConflict = OnConflictStrategy.REPLACE )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg citi: Citi)
 
     @Query("SELECT * FROM Cities_table ORDER BY uid DESC")
